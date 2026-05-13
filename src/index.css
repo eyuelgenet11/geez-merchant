@@ -1,0 +1,387 @@
+/* ================================================
+   GEEZ SCRIPT — TRANSLATOR DASHBOARD
+   Premium Design System (Black, White & Brown)
+   ================================================ */
+
+:root {
+  --primary: #895129;         /* Geez Brown Accent */
+  --secondary: #1C1917;       /* Deep Black */
+  --bg-main: #FDFBFA;         /* Light Parchment */
+  --surface: #FFFFFF;
+  --text-main: #1C1917;
+  --text-dim: #737373;
+  --border: #E5E7EB;
+  --radius-full: 9999px;
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+}
+
+[data-theme='dark'] {
+  --bg-main: #0F172A;
+  --surface: #1E293B;
+  --text-main: #F1F5F9;
+  --text-dim: #94A3B8;
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ================================================
+   APP ROOT
+   ================================================ */
+.app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================================================
+   AUTH / LOGIN
+   ================================================ */
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-main);
+}
+
+.auth-card {
+  background: var(--surface);
+  padding: 50px 45px;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.auth-card h2 {
+  margin: 0 0 10px 0;
+  color: var(--text-main);
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.auth-form label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 14px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 15px;
+  background: var(--bg-main);
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.auth-form input:focus {
+  border-color: var(--primary);
+}
+
+.login-btn {
+  background: var(--secondary);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.login-btn:hover {
+  background: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(137, 81, 41, 0.25);
+}
+
+/* ================================================
+   NAVBAR (fallback top nav)
+   ================================================ */
+.navbar {
+  background: var(--secondary);
+  color: white;
+  padding: 12px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--primary);
+}
+
+.loading-indicator {
+  background: rgba(255,255,255,0.1);
+  color: var(--primary);
+  padding: 5px 15px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ================================================
+   MODAL — JobDetailsModal
+   ================================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: var(--surface);
+  width: 90%;
+  max-width: 640px;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.modal-header {
+  padding: 28px 30px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.info-item label {
+  font-size: 10px;
+  color: var(--text-dim);
+  font-weight: 800;
+  display: block;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item p {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.description-section {
+  background: var(--bg-main);
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  margin: 20px 0;
+  border: 1px solid var(--border);
+}
+
+.view-source-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--secondary);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.view-source-btn:hover {
+  background: var(--primary);
+  transform: translateY(-1px);
+}
+
+.workspace-section {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px dashed var(--border);
+}
+
+.file-picker {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.modal-footer {
+  padding: 20px 30px;
+  background: var(--bg-main);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.secondary-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  border-color: var(--primary);
+}
+
+.primary-btn {
+  background: var(--secondary);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: var(--primary);
+  transform: translateY(-1px);
+}
+
+.primary-btn.claim {
+  background: #166534;
+}
+
+.primary-btn.claim:hover {
+  background: #15803d;
+}
+
+/* ================================================
+   STATUS BADGES
+   ================================================ */
+.badge-status {
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-status.pulse {
+  background: rgba(22, 101, 52, 0.1);
+  color: #166534;
+}
+
+.badge-status.blue {
+  background: rgba(29, 78, 216, 0.1);
+  color: #1d4ed8;
+}
+
+/* ================================================
+   MISC ANIMATION
+   ================================================ */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ================================================
+   FILE DOWNLOAD BUTTON
+   ================================================ */
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.download-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
