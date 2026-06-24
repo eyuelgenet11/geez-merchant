@@ -59,9 +59,29 @@ const saveTokenToSupabase = async (token, userId) => {
   }
 };
 
+/**
+ * Subscribes to foreground FCM messages.
+ * Returns an unsubscribe function so the caller can clean up properly.
+ * This avoids the "AbortError: signal is aborted without reason" that occurs
+ * when using a one-shot Promise with React Strict Mode double-mounting.
+ */
+export const subscribeFCMMessages = (callback) => {
+  const unsubscribe = onMessage(messaging, (payload) => {
+    callback(payload);
+  });
+  return unsubscribe;
+};
+
+// Legacy alias kept for any other callers — resolves once then the subscriber
+// is automatically cleaned up by FCM after the first message.
 export const onMessageListener = () =>
-  new Promise((resolve) => {
-    onMessage(messaging, (payload) => {
-      resolve(payload);
-    });
+  new Promise((resolve, reject) => {
+    try {
+      const unsub = onMessage(messaging, (payload) => {
+        unsub();
+        resolve(payload);
+      });
+    } catch (err) {
+      reject(err);
+    }
   });

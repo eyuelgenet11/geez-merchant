@@ -6,6 +6,7 @@ const JobDetailsModal = ({ job: initialJob, isOpen, onClose, onRefresh }) => {
   const [job, setJob] = useState(initialJob);
   const [activeTab, setActiveTab] = useState('details'); // 'details' or 'chat'
   const [price, setPrice] = useState(initialJob?.price ? initialJob.price : '');
+  const [deliveryTime, setDeliveryTime] = useState(initialJob?.delivery_time || '');
   const [deliveryFee, setDeliveryFee] = useState(initialJob?.delivery_fee || '');
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -18,6 +19,7 @@ const JobDetailsModal = ({ job: initialJob, isOpen, onClose, onRefresh }) => {
   useEffect(() => {
     setJob(initialJob);
     setPrice(initialJob?.price ? initialJob.price : '');
+    setDeliveryTime(initialJob?.delivery_time || '');
     setDeliveryFee(initialJob?.delivery_fee || '');
 
     if (initialJob?.id && isOpen) {
@@ -210,13 +212,25 @@ const JobDetailsModal = ({ job: initialJob, isOpen, onClose, onRefresh }) => {
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="0.00"
               />
+              <p style={styles.label}>Time Needed to Complete</p>
+              <input
+                type="text"
+                style={styles.input}
+                value={deliveryTime}
+                onChange={(e) => setDeliveryTime(e.target.value)}
+                placeholder="e.g., 2 days, 5 hours"
+              />
               <button
                 onClick={() => {
+                  if (!deliveryTime.trim()) {
+                    alert('Please enter the time needed to complete the translation.');
+                    return;
+                  }
                   const newStatus = job.delivery_requested ? 'pending' : 'quoted';
-                  updateStatus(newStatus, { price: parseFloat(price) });
+                  updateStatus(newStatus, { price: parseFloat(price), delivery_time: deliveryTime.trim() });
                 }}
                 style={styles.primaryBtn}
-                disabled={loading || !price}
+                disabled={loading || !price || !deliveryTime.trim()}
               >
                 {loading ? 'Sending...' : (job.delivery_requested ? 'Save Quote' : 'Send Quote')}
               </button>

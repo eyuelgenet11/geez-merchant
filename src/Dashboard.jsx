@@ -8,7 +8,7 @@ import {
   Wallet, OctagonX, CircleCheckBig, RefreshCw, User, Download, ExternalLink,
   BookOpen, ChevronDown, ChevronRight, Banknote, CalendarCheck
 } from 'lucide-react';
-import { requestNotificationPermission, onMessageListener } from './firebase';
+import { requestNotificationPermission, subscribeFCMMessages } from './firebase';
 
 const Dashboard = ({ user }) => {
   const { toasts, addToast, dismiss } = useNotifications();
@@ -193,18 +193,21 @@ const Dashboard = ({ user }) => {
       )
       .subscribe();
 
-    // Foreground FCM notification listener
-    onMessageListener()
-      .then((payload) => {
-        addToast(payload.notification?.title || 'Notification', payload.notification?.body || '', 'info');
-      })
-      .catch((err) => console.log('FCM listener error: ', err));
+    // Foreground FCM notification listener (persistent, with proper cleanup)
+    const unsubscribeFCM = subscribeFCMMessages((payload) => {
+      addToast(
+        payload.notification?.title || 'Notification',
+        payload.notification?.body || '',
+        'info'
+      );
+    });
 
     if (user?.id) requestNotificationPermission(user.id);
 
     return () => {
       supabase.removeChannel(jobChannel);
       supabase.removeChannel(reportChannel);
+      if (typeof unsubscribeFCM === 'function') unsubscribeFCM();
     };
   }, [user?.id, fetchMyJobs, fetchProfile, fetchLedger]);
 

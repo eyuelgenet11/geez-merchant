@@ -4,6 +4,7 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import { requestNotificationPermission } from './firebase';
 import { logActivity } from './activityLogger';
+import { verifyTranslatorSession } from './securityConfig';
 import './index.css';
 
 function App() {
@@ -21,45 +22,63 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        // 1. Check if a session exists
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        
-        if (initialSession) {
-          // 2. Check if the profile is approved
-          const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('status')
-            .eq('id', initialSession.user.id)
-            .maybeSingle();
+    let cancelled = false;
 
-          if (profile?.status === 'Approved') {
-            setSession(initialSession);
-            requestNotificationPermission(initialSession.user.id);
-            logActivity(initialSession.user.id, 'login');
-          }
+    // Step 1: Check for an existing session on page load / refresh.
+    // Using getSession() here avoids the Supabase INITIAL_SESSION deadlock.
+    const checkInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (cancelled) return;
+
+        if (!session) {
+          setLoading(false);
+          return;
+        }
+
+        const check = await verifyTranslatorSession(supabase, session);
+        if (cancelled) return;
+
+        if (check.ok) {
+          setSession(session);
+          requestNotificationPermission(session.user.id);
+        } else {
+          // Not an approved translator — sign them out cleanly
+          await supabase.auth.signOut();
         }
       } catch (err) {
-        console.error("Critical Auth Error:", err);
+        console.error('Session init error:', err);
       } finally {
-        // THIS IS THE FIX: This line MUST run no matter what happens above
-        setLoading(false); 
+        if (!cancelled) setLoading(false);
       }
     };
 
-    initializeApp();
+    checkInitialSession();
 
-    // Listen for sign-in/out events
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      // If someone logs out, we need to show the login screen
-      if (!session) {
-        setSession(null);
-        setLoading(false);
+    // Step 2: React to subsequent auth events (login, logout, token refresh).
+    // We deliberately skip INITIAL_SESSION here — it's handled above.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, nextSession) => {
+        if (event === 'SIGNED_OUT') {
+          setSession(null);
+          setLoading(false);
+        } else if (
+          event === 'SIGNED_IN' ||
+          event === 'TOKEN_REFRESHED' ||
+          event === 'USER_UPDATED'
+        ) {
+          // Session already verified at login time; just update state.
+          setSession(nextSession);
+          setLoading(false);
+        }
+        // INITIAL_SESSION is intentionally ignored here.
       }
-    });
+    );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (loading) {
